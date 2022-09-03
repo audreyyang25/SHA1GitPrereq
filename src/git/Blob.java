@@ -53,7 +53,12 @@ public class Blob {
 		hash = bytesToHexString(resultByteArry);
 		return hash;
 	}
-
+	
+	public String getZipContent () {
+		return zipContent;
+	}
+	
+	
 	// reads contents of the file
 	public static String content (String filepath) throws IOException {
 		File file = new File (filepath);
@@ -70,7 +75,6 @@ public class Blob {
 
 	// creates new file in objects folder labeled by hash with same content as original
 	public static String createsNewFile () throws IOException {
-//		FileWriter writer = new FileWriter("/Users/audreyyang/eclipse-workspace/SHA1GitPrereq/test/objects/" +hash);
 		File f = new File ("./test/objects/" + hash);
 		String path = f.getAbsolutePath();
 		FileWriter writer = new FileWriter(path);
@@ -85,9 +89,6 @@ public class Blob {
 	//should the zip file end in ".zip"?
 	public static String zipFile (String sourceFile) throws IOException {
 		File f = new File (sourceFile);
-//		String sourcePath = f.getAbsolutePath();
-//		System.out.println(sourcePath);
-//		f = new File (sourcePath);
 		String zipFile = sourceFile + ".zip";
 		FileOutputStream fos = new FileOutputStream(zipFile);
 		ZipOutputStream zipOut = new ZipOutputStream(fos);
