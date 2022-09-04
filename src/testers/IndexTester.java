@@ -12,10 +12,12 @@ public class IndexTester {
 		Index git = new Index();
 		git.init();
 		
-		git.add("aaa");
-		git.add("bbb");
+		git.add("someFile");
 		
-		git.remove("aaa");
+//		git.add("aaa");
+//		git.add("bbb");
+//		
+//		git.remove("someFile");
 	}
 
 }

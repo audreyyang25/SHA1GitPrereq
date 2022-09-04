@@ -31,7 +31,7 @@ public class Index {
 	public void add (String fileName) throws NoSuchAlgorithmException, IOException {
 		Blob blob = new Blob ("./test/" + fileName);
 
-		txtMap.put (fileName, blob.getZipContent());
+		txtMap.put (fileName, Blob.getHash("./test/" + fileName));
 
 		//is it ok to rewrite the index file each time, or should it be adding on to previous?
 		this.updateIndex();
@@ -65,8 +65,7 @@ public class Index {
 	
 	//figure out how to save hash in variable
 	public void remove (String fileName) throws IOException, NoSuchAlgorithmException {
-		File f = new File ("test/objects/"+Blob.generateSHA1Hash("./test/" + fileName)+".zip");
-		System.out.println (f.getAbsolutePath());
+		File f = new File ("test/objects/"+Blob.getHash("./test/" + fileName)+".zip");
 		f.delete();
 		txtMap.remove(fileName);
 		this.updateIndex();
