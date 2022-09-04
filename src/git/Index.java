@@ -12,6 +12,7 @@ public class Index {
 	private File index;
 	private File obj;
 	private HashMap <String, String> txtMap;
+	private String hash;
 
 	// does it have to be saved in a test folder?
 	public Index () {
@@ -30,8 +31,8 @@ public class Index {
 	//are we assuming that the file is already in test?
 	public void add (String fileName) throws NoSuchAlgorithmException, IOException {
 		Blob blob = new Blob ("./test/" + fileName);
-
-		txtMap.put (fileName, Blob.getHash("./test/" + fileName));
+		hash = blob.getHash();
+		txtMap.put (fileName, hash);
 
 		//is it ok to rewrite the index file each time, or should it be adding on to previous?
 		this.updateIndex();
@@ -52,20 +53,10 @@ public class Index {
 			bf.newLine();
 		}
 		bf.close();
-
-		//		FileWriter bf = new FileWriter(index, true);
-		//
-		//		// put key and value separated by a colon
-		//		bf.append(fileName + " : "
-		//				+ txtMap.get(fileName) + "\n");
-		//
-		//		
-		//		bf.close();
 	}
 	
-	//figure out how to save hash in variable
 	public void remove (String fileName) throws IOException, NoSuchAlgorithmException {
-		File f = new File ("test/objects/"+Blob.getHash("./test/" + fileName)+".zip");
+		File f = new File ("test/objects/"+txtMap.get(fileName)+".zip");
 		f.delete();
 		txtMap.remove(fileName);
 		this.updateIndex();

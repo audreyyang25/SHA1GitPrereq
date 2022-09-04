@@ -3,16 +3,10 @@ package git;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -24,9 +18,7 @@ public class Blob {
 	private String content;
 	private String hash;
 	private String zipContent;
-	private static HashMap <String, String> filepathToSHA1 = new HashMap <String, String> ();
 	
-	//should it be generalized to work on all computers, or just mine?
 	public Blob (String filePath) throws IOException, NoSuchAlgorithmException {
 		this.generateSHA1Hash(filePath);
 		content = this.content(filePath);
@@ -38,7 +30,6 @@ public class Blob {
 
 		System.out.println ("Creating new blob " + hash.substring(0,10) + " from content: " + zipContent);
 		//should this only display the first few letters of the hash?
-		filepathToSHA1.put(filePath, hash);
 
 	}
 
@@ -51,14 +42,14 @@ public class Blob {
 		// read all file content
 		while (digestInputStream.read(bytes) > 0);
 
-		//	        digest = digestInputStream.getMessageDigest();
+		// digest = digestInputStream.getMessageDigest();
 		byte[] resultByteArry = digest.digest();
 		hash = bytesToHexString(resultByteArry);
 		return hash;
 	}
 	
-	public static String getHash (String filePath) {
-		return (filepathToSHA1.get(filePath));
+	public String getHash () {
+		return (hash);
 	}
 	
 	public String getZipContent () {
