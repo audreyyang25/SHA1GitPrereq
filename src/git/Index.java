@@ -14,27 +14,23 @@ public class Index {
 	private HashMap <String, String> txtMap;
 	private String hash;
 
-	// does it have to be saved in a test folder?
 	public Index () {
-		File test = new File ("./test");
-		test.mkdir();
 	}
 
-
+	// initializes index file and objects folder in test
 	public void init () {
-		index = new File ("./test/index");
-		obj = new File ("./test/objects");
+		index = new File ("./index");
+		obj = new File ("./objects");
 		obj.mkdir(); 
 		txtMap = new HashMap <String, String> ();
 	}
 
-	//are we assuming that the file is already in test?
+	//creates blob from file, stores hash in hashmap, and updates index file
 	public void add (String fileName) throws NoSuchAlgorithmException, IOException {
-		Blob blob = new Blob ("./test/" + fileName);
+		Blob blob = new Blob ("./" + fileName);
 		hash = blob.getHash();
 		txtMap.put (fileName, hash);
 
-		//is it ok to rewrite the index file each time, or should it be adding on to previous?
 		this.updateIndex();
 	}
 
@@ -55,8 +51,9 @@ public class Index {
 		bf.close();
 	}
 	
+	// removes file from index and objects folder
 	public void remove (String fileName) throws IOException, NoSuchAlgorithmException {
-		File f = new File ("test/objects/"+txtMap.get(fileName)+".zip");
+		File f = new File ("objects/"+txtMap.get(fileName)+".zip");
 		f.delete();
 		txtMap.remove(fileName);
 		this.updateIndex();

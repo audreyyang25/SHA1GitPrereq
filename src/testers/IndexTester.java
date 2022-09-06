@@ -14,8 +14,9 @@ public class IndexTester {
 		
 		git.add("someFile");
 		
-		git.add("aaa");
-		git.add("bbb");
+//		git.add("aaa");
+//		git.add("aaa");
+//		git.add("bbb");
 		
 		git.remove("someFile");
 	}

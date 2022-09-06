@@ -15,21 +15,22 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public class Blob {
-	private String content;
-	private String hash;
-	private String zipContent;
+	private String fileContent;
+	private String SHA1Hash;
+	private String storesZippedContent;
 	
+	//creates Blob from file path
 	public Blob (String filePath) throws IOException, NoSuchAlgorithmException {
 		this.generateSHA1Hash(filePath);
-		content = this.content(filePath);
+		fileContent = this.content(filePath);
 		String hashFile = this.createsNewFile();
 		String zipFilePath = this.zipFile(hashFile);
-		zipContent = this.content(zipFilePath);
-		System.out.println ("Reading contents of " + filePath + ": " + content);
+		storesZippedContent = this.content(zipFilePath);
+		System.out.println ("Reading contents of " + filePath + ": " + fileContent);
 
-
-		System.out.println ("Creating new blob " + hash.substring(0,10) + " from content: " + zipContent);
-		//should this only display the first few letters of the hash?
+		//only displays the first 10 letters of the hash
+		System.out.println ("Creating new blob " + SHA1Hash.substring(0,10) + " from content: " + storesZippedContent);
+		
 
 	}
 
@@ -44,16 +45,16 @@ public class Blob {
 
 		// digest = digestInputStream.getMessageDigest();
 		byte[] resultByteArry = digest.digest();
-		hash = bytesToHexString(resultByteArry);
-		return hash;
+		SHA1Hash = bytesToHexString(resultByteArry);
+		return SHA1Hash;
 	}
 	
 	public String getHash () {
-		return (hash);
+		return (SHA1Hash);
 	}
 	
 	public String getZipContent () {
-		return zipContent;
+		return storesZippedContent;
 	}
 	
 	
@@ -73,18 +74,18 @@ public class Blob {
 
 	// creates new file in objects folder labeled by hash with same content as original
 	public String createsNewFile () throws IOException {
-		File f = new File ("./test/objects/" + hash);
+		File f = new File ("objects/" + SHA1Hash);
 		String path = f.getAbsolutePath();
 		FileWriter writer = new FileWriter(path);
 		
-		writer.write (content);
+		writer.write (fileContent);
 		writer.close();
 		return path;
 	}
-
+	
+	
 	// converts file to zipped format
-	//when you unzip, should it open in the objects folder too?
-	//is it ok that the zip file ends in ".zip"? (it has to, right?)
+	// opens unzipped file in the objects folder
 	public String zipFile (String sourceFile) throws IOException {
 		File f = new File (sourceFile);
 		String zipFile = sourceFile + ".zip";
