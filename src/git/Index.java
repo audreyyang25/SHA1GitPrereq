@@ -29,7 +29,6 @@ public class Index {
 	            f.delete();
 	        }
 		}
-		obj.delete();
 		index = new File ("./index");
 		obj = new File ("./objects");
 		obj.mkdir(); 
