@@ -15,10 +15,21 @@ public class Index {
 	private String hash;
 
 	public Index () {
+		index = new File ("./index");
+		obj = new File ("./objects");
+		obj.mkdir();
 	}
 
 	// initializes index file and objects folder in test
 	public void init () {
+		index.delete();
+		if (obj.exists()) {
+			File[] contents = obj.listFiles();
+			for (File f : contents) {
+	            f.delete();
+	        }
+		}
+		obj.delete();
 		index = new File ("./index");
 		obj = new File ("./objects");
 		obj.mkdir(); 

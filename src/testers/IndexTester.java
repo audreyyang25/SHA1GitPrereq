@@ -13,12 +13,14 @@ public class IndexTester {
 		git.init();
 		
 		git.add("someFile");
-		
+		git.add("someFile");
+		git.add("otherFile");
+//		git.init();
 //		git.add("aaa");
 //		git.add("aaa");
 //		git.add("bbb");
 		
-		git.remove("someFile");
+//		git.remove("someFile");
 	}
 
 }

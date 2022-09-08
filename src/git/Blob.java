@@ -21,8 +21,8 @@ public class Blob {
 	
 	//creates Blob from file path
 	public Blob (String filePath) throws IOException, NoSuchAlgorithmException {
-		this.generateSHA1Hash(filePath);
 		fileContent = this.content(filePath);
+		this.generateSHA1Hash(filePath);
 		String hashFile = this.createsNewFile();
 		String zipFilePath = this.zipFile(hashFile);
 		storesZippedContent = this.content(zipFilePath);
@@ -33,6 +33,7 @@ public class Blob {
 		
 
 	}
+		
 
 	//generates a Hash String for given filepath
 	public String generateSHA1Hash (String filePath) throws IOException, NoSuchAlgorithmException {
