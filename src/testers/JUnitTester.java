@@ -70,7 +70,7 @@ class JUnitTester {
 	boolean correctContent (Blob b) throws IOException {
 //		System.out.println (readFile (b.getHash()));
 		StringBuilder sb = new StringBuilder();
-		sb.append("kaka");
+		sb.append("hello my name is idalis");
 
 		File f = new File("poop.txt");
 		ZipOutputStream out = new ZipOutputStream(new FileOutputStream(f));
