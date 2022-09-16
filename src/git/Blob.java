@@ -3,6 +3,7 @@ package git;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -37,6 +38,7 @@ public class Blob {
 
 	//generates a Hash String for given filepath
 	public String generateSHA1Hash (String filePath) throws IOException, NoSuchAlgorithmException {
+		//https://gist.github.com/zeroleaf/6809843
 		FileInputStream fileInputStream = new FileInputStream(filePath);
 		MessageDigest digest = MessageDigest.getInstance("SHA-1");
 		DigestInputStream digestInputStream = new DigestInputStream(fileInputStream, digest);
@@ -107,7 +109,7 @@ public class Blob {
 		f.delete();
 		return zipFile;
 	}
-
+	
 	// some method that helps with generating hash
 	public static String bytesToHexString(byte[] bytes) {
 		StringBuilder sb = new StringBuilder();
