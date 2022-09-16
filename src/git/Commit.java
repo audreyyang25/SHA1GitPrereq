@@ -52,6 +52,7 @@ public class Commit {
 		byte[] resultByteArry = digest.digest();
 		SHA1Hash = bytesToHexString(resultByteArry);
 		return SHA1Hash;
+		
 	}
 	
 	private String getDate () {
