@@ -21,6 +21,7 @@ import java.util.Scanner;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -66,18 +67,28 @@ class JUnitTester {
 		return false;
 	}
 	
-//	boolean correctContent (Blob b) throws IOException {
-////		System.out.println (readFile (b.getHash()));
-//		Path p = Paths.get(b.getHash());
-////		p.toAbsolutePath()
-////		System.out.println(p.toAbsolutePath());
-////		String pathie = "/Users/idalis/eclipse-workspace/SHA1GitPrereq/B32E5C40D8F8A5169BAA467DDD3EC7252CB03948";
-//		String s = b.content("B32E5C40D8F8A5169BAA467DDD3EC7252CB03948");
-//
-//		if (s.equals("hello my name is idalis"))
-//			return true;
-//		return false;
-//	}
+	boolean correctContent (Blob b) throws IOException {
+//		System.out.println (readFile (b.getHash()));
+		StringBuilder sb = new StringBuilder();
+		sb.append("kaka");
+
+		File f = new File("poop.txt");
+		ZipOutputStream out = new ZipOutputStream(new FileOutputStream(f));
+		ZipEntry e = new ZipEntry("myOwnZippie");
+		out.putNextEntry(e);
+
+		byte[] data = sb.toString().getBytes();
+		out.write(data, 0, data.length);
+		out.closeEntry();
+
+		out.close();
+		Path audrey = Paths.get(b.getHash());
+		Path myOwn = Paths.get("myOwnZippie");
+		if (audrey.equals(myOwn))
+			return true;
+		return false;
+	}
+	
 	
 	boolean addDeleteIndex (Index i) throws NoSuchAlgorithmException, IOException {
 		boolean passesAll = false;
@@ -121,7 +132,6 @@ class JUnitTester {
 		i.remove("f1");
 		i.remove("f2");
 		String contentAfterDel = Files.readString(pf1);
-		System.out.println(contentAfterDel + "!!!!");
 		if (contentAfterDel.length()>0) {
 			passesAll = false;
 		}
@@ -138,7 +148,6 @@ class JUnitTester {
 		 */
 		assertTrue ("Failed to create a file", createdFile(b));
 		assertTrue ("Incorrect SHA1 name", correctSHA1(b));
-//		assertTrue ("Incorect content in SHA1 file",correctContent(b));
 		/** INDEX TESTING
 		 * make index, add file, create a new file call objects/SHA1 name
 		 * assertTrue file.exists
@@ -150,12 +159,15 @@ class JUnitTester {
 		Path pp = Paths.get("./index");
 		System.out.println (addDeleteIndex(i));
 		assertTrue (Files.exists(pp));
-		assertTrue ("Did not add to index file", addDeleteIndex(i));
+		assertTrue ("Did not add and delete correctly from index file", addDeleteIndex(i));
 		Path ppp = Paths.get("f1");
 		Path pppp = Paths.get("f2");
-		assertTrue (Files.exists(ppp));
-		assertTrue (Files.exists(pppp));
-//		assertTrue ("Did not delete from index file", deleteIndex(i));
+		assertTrue ("Incorect content in SHA1 file",correctContent(b));
+		assertFalse (Files.exists(ppp));
+		assertFalse (Files.exists(pppp));
+		/**
+		 * blob testing content w zip
+		 */
 	}
 
 }
