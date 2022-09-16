@@ -2,6 +2,7 @@ package git;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -22,7 +23,8 @@ public class Commit {
 	private String summary;
 	private String author;
 	private String date;
-	private String SHA1Hash;
+	private String hash;
+	private String content;
 	
 	public Commit (String treeSHA, String summary1, String author1) throws NoSuchAlgorithmException, IOException {
 		nextCommit = null; // do I need both this and parent?
@@ -32,10 +34,10 @@ public class Commit {
 		author = author1;
 		date = this.getDate();
 		this.writeFile("commit.txt");
-		SHA1Hash = this.generateSHA1Hash("./commit.txt");
+		hash = this.generateSHA1Hash("./commit.txt");
 		File obj = new File ("./objects");
 		obj.mkdir();
-		
+		this.createsNewFile();
 
 	}
 	
@@ -50,22 +52,20 @@ public class Commit {
 
 		// digest = digestInputStream.getMessageDigest();
 		byte[] resultByteArry = digest.digest();
-		SHA1Hash = bytesToHexString(resultByteArry);
-		return SHA1Hash;
+		hash = bytesToHexString(resultByteArry);
+		return hash;
 		
 	}
 	
 	private String getDate () {
-		Calendar date = Calendar.getInstance();
-		DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");  
-        String strDate = dateFormat.format(date);
-        System.out.print(strDate);
-        return strDate;
+		Calendar cal = Calendar.getInstance();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		return sdf.format(cal.getTime());
 	}
 	
 	private void writeFile (String fileName) {
 		//what is the ptree value -- the hash? or what's stored inside?
-		String content = pTree + "\n" + "./" + fileName + "\n" + author + "\n" + date + "\n" + summary;
+		content = pTree + "\n" + "./" + fileName + "\n" + author + "\n" + date + "\n" + summary;
 		 Path p = Paths.get(fileName);
 	        try {
 	            Files.writeString(p, content, StandardCharsets.ISO_8859_1);
@@ -73,6 +73,16 @@ public class Commit {
 	            // TODO Auto-generated catch block
 	            e.printStackTrace();
 	        }
+	}
+	
+	private String createsNewFile () throws IOException {
+		File f = new File ("objects/" + hash);
+		String path = f.getAbsolutePath();
+		FileWriter writer = new FileWriter(path);
+		
+		writer.write (content);
+		writer.close();
+		return path;
 	}
 	
 	public static String bytesToHexString(byte[] bytes) {
