@@ -11,6 +11,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -77,7 +78,56 @@ class JUnitTester {
 //			return true;
 //		return false;
 //	}
-
+	
+	boolean addDeleteIndex (Index i) throws NoSuchAlgorithmException, IOException {
+		boolean passesAll = false;
+		/**
+		 * CREATING FILES
+		 */
+		FileWriter fOne = new FileWriter("f1");//output file
+		PrintWriter printW = new PrintWriter (fOne);//writing stuff onto fw
+		printW.write("hello");
+		if(printW != null) {
+		   printW.flush();
+		   printW.close();
+		}
+		FileWriter fTwo = new FileWriter("f2");//output file
+		PrintWriter printW2 = new PrintWriter (fTwo);//writing stuff onto fw
+		printW2.write("goodbye");
+		if(printW2 != null) {
+		   printW2.flush();
+		   printW2.close();
+		}
+		i.add("f1");
+		Path pf1 = Paths.get("./index");
+//		String content = Files.readString(pf1);
+		i.add("f2");
+		String content2 = Files.readString(pf1);
+		/**
+		 * TESTING ADD INDEX
+		 */
+		if (content2.substring(0,2).equals("f1"))
+			passesAll = true;
+		if (content2.substring(5,45).equalsIgnoreCase("aaf4c61ddcc5e8a2dabede0f3b482cd9aea9434d"))
+			passesAll = true;
+		if (content2.substring(46,48).equalsIgnoreCase("f2"))
+			passesAll = true;
+		if (content2.substring(51,91).equalsIgnoreCase("3c8ec4874488f6090a157b014ce3397ca8e06d4f"))
+			passesAll = true;
+		
+		/**
+		 * TESTING DELETE INDEX
+		 */
+		i.remove("f1");
+		i.remove("f2");
+		String contentAfterDel = Files.readString(pf1);
+		System.out.println(contentAfterDel + "!!!!");
+		if (contentAfterDel.length()>0) {
+			passesAll = false;
+		}
+		return passesAll;
+//		Path pf2 = Paths.get("f2");
+	}
 	
 	@Test
 	void test() throws NoSuchAlgorithmException, IOException {
@@ -97,7 +147,15 @@ class JUnitTester {
 		i.init();
 		Path p = Paths.get("./objects");
 		assertTrue (Files.exists(p));
-		assertTrue ("Incorrect SHA1 name", correctSHA1(b));
+		Path pp = Paths.get("./index");
+		System.out.println (addDeleteIndex(i));
+		assertTrue (Files.exists(pp));
+		assertTrue ("Did not add to index file", addDeleteIndex(i));
+		Path ppp = Paths.get("f1");
+		Path pppp = Paths.get("f2");
+		assertTrue (Files.exists(ppp));
+		assertTrue (Files.exists(pppp));
+//		assertTrue ("Did not delete from index file", deleteIndex(i));
 	}
 
 }
