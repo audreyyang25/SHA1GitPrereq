@@ -7,7 +7,7 @@ import git.Blob;
 
 public class BlobTester {
 	public static void main (String [] args) throws IOException, NoSuchAlgorithmException {
-//		Blob blob = new Blob ("bbb.txt");
+		Blob blob = new Blob ("otherFile");
 		Blob blob2 = new Blob ("./someFile");
 //		Blob blob3 = new Blob ("anotherFile");
 //		System.out.println (Blob.content("/Users/audreyyang/eclipse-workspace/SHA1GitPrereq/test/bbb.txt"));

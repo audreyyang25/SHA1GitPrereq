@@ -26,22 +26,71 @@ public class Commit {
 	private String hash;
 	private String content;
 	
-	public Commit (String treeSHA, String summary1, String author1) throws NoSuchAlgorithmException, IOException {
-		nextCommit = null; // do I need both this and parent?
-		parent = null;
-		pTree = treeSHA;
+	public Commit (String treeSHAPath, String summary1, String author1, Commit parent1) throws NoSuchAlgorithmException, IOException {
+		nextCommit = null;
+		parent = parent1;
+		this.connectParent();
+		pTree = treeSHAPath;
 		summary = summary1;
 		author = author1;
-		date = this.getDate();
-		this.writeFile("commit.txt");
+		date = this.getDate().substring(0, 10);
+
+	}
+	
+	//creates a file with these contents
+	public File contentOfFile () throws NoSuchAlgorithmException, IOException {
+		File f = new File (pTree);
+		String pSHA = "";
+		String c = "";
+		if (parent == null)
+			pSHA = "null";
+		else
+			pSHA = "./objects/" + parent.returnSha();
+		if (nextCommit == null)
+			c = "null";
+		else
+			c = "./objects/" + nextCommit.returnSha();
+		
+		content = f.getCanonicalPath() + "\n" + pSHA + "\n" + c + "\n" + author + "\n" + date + "\n" + summary;
+		this.writeFile("commit.txt", content);
+		File contentFile = new File ("./commit.txt");
+		return contentFile;
+	}
+	
+	public String returnSha () throws NoSuchAlgorithmException, IOException {
+		String s = this.generateSHA1Hash(this.contentOfFile().getAbsolutePath());
+		return s;
+	}
+	
+	//creates the SHA-named file in objects
+	public void writesFileToObjects () throws IOException, NoSuchAlgorithmException {
+		this.contentOfFile();
 		hash = this.generateSHA1Hash("./commit.txt");
 		File obj = new File ("./objects");
 		obj.mkdir();
 		this.createsNewFile();
-
+		File commitText = new File ("./commit.txt");
+		commitText.delete();
 	}
 	
-	public String generateSHA1Hash (String filePath) throws IOException, NoSuchAlgorithmException {
+	//sets the parent's nextCommit to child
+	public void setNextCommit (Commit child) throws NoSuchAlgorithmException, IOException {
+		nextCommit = child;
+		this.contentOfFile();
+//		this.writesFileToObjects();
+	}
+	
+	//sets the parent's nextCommit to this Commit
+	public boolean connectParent () throws NoSuchAlgorithmException, IOException {
+		if (parent != null) {
+			parent.setNextCommit(this);
+			return true;
+		}
+		return false;
+	}
+
+	//generates SHA1Hash
+	private String generateSHA1Hash (String filePath) throws IOException, NoSuchAlgorithmException {
 		//https://gist.github.com/zeroleaf/6809843
 		FileInputStream fileInputStream = new FileInputStream(filePath);
 		MessageDigest digest = MessageDigest.getInstance("SHA-1");
@@ -56,16 +105,17 @@ public class Commit {
 		return hash;
 		
 	}
-	
+//	
+	//returns the exact date
 	private String getDate () {
 		Calendar cal = Calendar.getInstance();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		return sdf.format(cal.getTime());
 	}
 	
-	private void writeFile (String fileName) {
-		//what is the ptree value -- the hash? or what's stored inside?
-		content = pTree + "\n" + "./" + fileName + "\n" + author + "\n" + date + "\n" + summary;
+	//writes String into file
+	private void writeFile (String fileName, String content) throws IOException {
+		
 		 Path p = Paths.get(fileName);
 	        try {
 	            Files.writeString(p, content, StandardCharsets.ISO_8859_1);
@@ -75,6 +125,7 @@ public class Commit {
 	        }
 	}
 	
+	//names the file 
 	private String createsNewFile () throws IOException {
 		File f = new File ("objects/" + hash);
 		String path = f.getAbsolutePath();
@@ -85,6 +136,7 @@ public class Commit {
 		return path;
 	}
 	
+	//helper method
 	public static String bytesToHexString(byte[] bytes) {
 		StringBuilder sb = new StringBuilder();
 		for (byte b : bytes) {
