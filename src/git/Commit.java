@@ -57,6 +57,7 @@ public class Commit {
 		return contentFile;
 	}
 	
+	//aaaaaaah i get an infinite loop T-T
 	public String returnSha () throws NoSuchAlgorithmException, IOException {
 		String s = this.generateSHA1Hash(this.contentOfFile().getAbsolutePath());
 		return s;
@@ -76,7 +77,6 @@ public class Commit {
 	//sets the parent's nextCommit to child
 	public void setNextCommit (Commit child) throws NoSuchAlgorithmException, IOException {
 		nextCommit = child;
-		this.contentOfFile();
 //		this.writesFileToObjects();
 	}
 	
