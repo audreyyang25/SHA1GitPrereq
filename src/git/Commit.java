@@ -29,59 +29,61 @@ public class Commit {
 	public Commit (String treeSHAPath, String summary1, String author1, Commit parent1) throws NoSuchAlgorithmException, IOException {
 		nextCommit = null;
 		parent = parent1;
-		this.connectParent();
 		pTree = treeSHAPath;
 		summary = summary1;
 		author = author1;
-		date = this.getDate().substring(0, 10);
-
-	}
-	
-	//creates a file with these contents
-	public File contentOfFile () throws NoSuchAlgorithmException, IOException {
-		File f = new File (pTree);
+		date = this.getDate();
+		this.connectParent();
+		//SHA1 hash is produced by new line deliminated info
 		String pSHA = "";
-		String c = "";
 		if (parent == null)
 			pSHA = "null";
 		else
 			pSHA = "./objects/" + parent.returnSha();
-		if (nextCommit == null)
-			c = "null";
-		else
+		String info = summary + "\n" + date + "\n" + author + "\n" + pSHA;
+		this.writeFile("./hashFile", info);
+		this.generateSHA1Hash("./hashFile");
+		File hashFile = new File ("./hashFile");
+		hashFile.delete();
+	}
+	
+	//creates the SHA-named file in objects
+		public void writesFileToObjects () throws IOException, NoSuchAlgorithmException {
+			
+			this.contentOfFile();
+			File obj = new File ("./objects");
+			obj.mkdir();
+			this.createsNewFile();
+			File commitText = new File ("./commit.txt");
+			commitText.delete();
+		}
+	
+	//creates a file with these contents
+	private File contentOfFile () throws NoSuchAlgorithmException, IOException {
+		String pSHA = "";
+		String c = "";
+		if (parent != null)
+			pSHA = "./objects/" + parent.returnSha();
+		if (nextCommit != null)
 			c = "./objects/" + nextCommit.returnSha();
 		
-		content = f.getCanonicalPath() + "\n" + pSHA + "\n" + c + "\n" + author + "\n" + date + "\n" + summary;
+		content = pTree + "\n" + pSHA + "\n" + c + "\n" + author + "\n" + date + "\n" + summary;
 		this.writeFile("commit.txt", content);
 		File contentFile = new File ("./commit.txt");
 		return contentFile;
 	}
 	
-	//aaaaaaah i get an infinite loop T-T
-	public String returnSha () throws NoSuchAlgorithmException, IOException {
-		String s = this.generateSHA1Hash(this.contentOfFile().getAbsolutePath());
-		return s;
+	private String returnSha () throws NoSuchAlgorithmException, IOException {
+		return hash;
 	}
-	
-	//creates the SHA-named file in objects
-	public void writesFileToObjects () throws IOException, NoSuchAlgorithmException {
-		this.contentOfFile();
-		hash = this.generateSHA1Hash("./commit.txt");
-		File obj = new File ("./objects");
-		obj.mkdir();
-		this.createsNewFile();
-		File commitText = new File ("./commit.txt");
-		commitText.delete();
-	}
-	
+
 	//sets the parent's nextCommit to child
-	public void setNextCommit (Commit child) throws NoSuchAlgorithmException, IOException {
+	private void setNextCommit (Commit child) throws NoSuchAlgorithmException, IOException {
 		nextCommit = child;
-//		this.writesFileToObjects();
 	}
 	
 	//sets the parent's nextCommit to this Commit
-	public boolean connectParent () throws NoSuchAlgorithmException, IOException {
+	private boolean connectParent () throws NoSuchAlgorithmException, IOException {
 		if (parent != null) {
 			parent.setNextCommit(this);
 			return true;
@@ -105,12 +107,13 @@ public class Commit {
 		return hash;
 		
 	}
-//	
+	
 	//returns the exact date
-	private String getDate () {
+	public String getDate () {
 		Calendar cal = Calendar.getInstance();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		return sdf.format(cal.getTime());
+		String d = sdf.format(cal.getTime());
+		return d.substring(0, 10);
 	}
 	
 	//writes String into file
