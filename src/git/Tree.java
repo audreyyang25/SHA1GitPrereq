@@ -23,7 +23,7 @@ public class Tree {
 		   printW.close();
 		}
 		Blob b = new Blob ("tree.txt");
-		String newFile = b.generateSHA1Hash(fromList);
+		String newFile = b.generateSHA1Hash(fromList); // fromList is not a filepath -- this is why it's throwing an error
 		FileWriter fTwo = new FileWriter(newFile);//output file
 		PrintWriter printW2 = new PrintWriter (fTwo);//writing stuff onto fw
 		printW2.write("fromList");
